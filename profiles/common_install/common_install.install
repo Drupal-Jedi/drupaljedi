@@ -1,0 +1,358 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the standard installation profile.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function common_install_install() {
+  //////////////////////////////////////////
+  //* Start of enabling Standart profile *//
+  //////////////////////////////////////////
+  // Add text formats.
+  $filtered_html_format = array(
+    'format' => 'filtered_html',
+    'name' => 'Filtered HTML',
+    'weight' => 0,
+    'filters' => array(
+      // URL filter.
+      'filter_url' => array(
+        'weight' => 0,
+        'status' => 1,
+      ),
+      // HTML filter.
+      'filter_html' => array(
+        'weight' => 1,
+        'status' => 1,
+      ),
+      // Line break filter.
+      'filter_autop' => array(
+        'weight' => 2,
+        'status' => 1,
+      ),
+      // HTML corrector filter.
+      'filter_htmlcorrector' => array(
+        'weight' => 10,
+        'status' => 1,
+      ),
+    ),
+  );
+  $filtered_html_format = (object) $filtered_html_format;
+  filter_format_save($filtered_html_format);
+
+  $full_html_format = array(
+    'format' => 'full_html',
+    'name' => 'Full HTML',
+    'weight' => 1,
+    'filters' => array(
+      // URL filter.
+      'filter_url' => array(
+        'weight' => 0,
+        'status' => 1,
+      ),
+      // Line break filter.
+      'filter_autop' => array(
+        'weight' => 1,
+        'status' => 1,
+      ),
+      // HTML corrector filter.
+      'filter_htmlcorrector' => array(
+        'weight' => 10,
+        'status' => 1,
+      ),
+    ),
+  );
+  $full_html_format = (object) $full_html_format;
+  filter_format_save($full_html_format);
+
+  // Insert default pre-defined node types into the database. For a complete
+  // list of available node type attributes, refer to the node type API
+  // documentation at: http://api.drupal.org/api/HEAD/function/hook_node_info.
+  $types = array(
+    array(
+      'type' => 'page',
+      'name' => st('Basic page'),
+      'base' => 'node_content',
+      'description' => st("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 0,
+    ),
+    array(
+      'type' => 'article',
+      'name' => st('Article'),
+      'base' => 'node_content',
+      'description' => st('Use <em>articles</em> for time-sensitive content like news, press releases or blog posts.'),
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 0,
+    ),
+  );
+
+  foreach ($types as $type) {
+    $type = node_type_set_defaults($type);
+    node_type_save($type);
+    node_add_body_field($type);
+  }
+
+  // Insert default pre-defined RDF mapping into the database.
+  $rdf_mappings = array(
+    array(
+      'type' => 'node',
+      'bundle' => 'page',
+      'mapping' => array(
+        'rdftype' => array('foaf:Document'),
+      ),
+    ),
+    array(
+      'type' => 'node',
+      'bundle' => 'article',
+      'mapping' => array(
+        'field_image' => array(
+          'predicates' => array('og:image', 'rdfs:seeAlso'),
+          'type' => 'rel',
+        ),
+        'field_tags' => array(
+          'predicates' => array('dc:subject'),
+          'type' => 'rel',
+        ),
+      ),
+    ),
+  );
+  foreach ($rdf_mappings as $rdf_mapping) {
+    rdf_mapping_save($rdf_mapping);
+  }
+
+  // Default "Basic page" to not be promoted and have comments disabled.
+  variable_set('node_options_page', array('status'));
+  variable_set('comment_page', COMMENT_NODE_HIDDEN);
+
+  // Don't display date and author information for "Basic page" nodes by default.
+  variable_set('node_submitted_page', FALSE);
+
+  // Enable user picture support and set the default to a square thumbnail option.
+  variable_set('user_pictures', '1');
+  variable_set('user_picture_dimensions', '1024x1024');
+  variable_set('user_picture_file_size', '800');
+  variable_set('user_picture_style', 'thumbnail');
+
+  // Allow visitor account creation with administrative approval.
+  variable_set('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL);
+
+  // Create a default vocabulary named "Tags", enabled for the 'article' content type.
+  $description = st('Use tags to group articles on similar topics into categories.');
+  $help = st('Enter a comma-separated list of words to describe your content.');
+  $vocabulary = (object) array(
+    'name' => st('Tags'),
+    'description' => $description,
+    'machine_name' => 'tags',
+    'help' => $help,
+
+  );
+  taxonomy_vocabulary_save($vocabulary);
+
+  $field = array(
+    'field_name' => 'field_' . $vocabulary->machine_name,
+    'type' => 'taxonomy_term_reference',
+    // Set cardinality to unlimited for tagging.
+    'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+    'settings' => array(
+      'allowed_values' => array(
+        array(
+          'vocabulary' => $vocabulary->machine_name,
+          'parent' => 0,
+        ),
+      ),
+    ),
+  );
+  field_create_field($field);
+
+  $instance = array(
+    'field_name' => 'field_' . $vocabulary->machine_name,
+    'entity_type' => 'node',
+    'label' => 'Tags',
+    'bundle' => 'article',
+    'description' => $vocabulary->help,
+    'widget' => array(
+      'type' => 'taxonomy_autocomplete',
+      'weight' => -4,
+    ),
+    'display' => array(
+      'default' => array(
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 10,
+      ),
+    ),
+  );
+  field_create_instance($instance);
+
+
+  // Enable default permissions for system roles.
+  $filtered_html_permission = filter_permission_name($filtered_html_format);
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content', 'access comments', $filtered_html_permission));
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content', 'access comments', 'post comments', 'skip comment approval', $filtered_html_permission));
+
+  // Create a default role for site administrators, with all available permissions assigned.
+  $admin_role = new stdClass();
+  $admin_role->name = 'administrator';
+  $admin_role->weight = 2;
+  user_role_save($admin_role);
+  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+  // Set this as the administrator role.
+  variable_set('user_admin_role', $admin_role->rid);
+
+  // Assign user 1 the "administrator" role.
+  db_insert('users_roles')
+    ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+    ->execute();
+
+  // Create a Home link in the main menu.
+  $item = array(
+    'link_title' => st('Home'),
+    'link_path' => '<front>',
+    'menu_name' => 'main-menu',
+  );
+  menu_link_save($item);
+
+  // Update the menu router information.
+  menu_rebuild();
+
+  variable_set('node_admin_theme', '1');
+
+  //////////////////////////////////////////
+  ///* End of enabling Standart profile *///
+  //////////////////////////////////////////
+
+
+
+  ///////////////////////////////////////////////////
+  ///* Start of enabling Admin dashboard profile *///
+  ///////////////////////////////////////////////////
+  // Retrieve modules to enable.
+  db_update('system')
+    ->fields(array('weight' => 100))
+    ->condition('name', 'common')
+    ->execute();
+
+  $blocks = array(
+    0 => array(
+      'module' => 'search',
+      'delta' => 'form',
+      'theme' => 'common_admin',
+      'weight' => -1,
+      'region' => '',
+      'status' => 0,
+    ),
+    1 => array(
+      'module' => 'system',
+      'delta' => 'navigation',
+      'theme' => 'common_admin',
+      'weight' => -1,
+      'region' => '',
+      'status' => 0,
+    ),
+    2 => array(
+      'module' => 'system',
+      'delta' => 'powered-by',
+      'theme' => 'common_admin',
+      'weight' => -1,
+      'region' => '',
+      'status' => 0,
+    ),
+    3 => array(
+      'module' => 'user',
+      'delta' => 'login',
+      'theme' => 'common_admin',
+      'weight' => -1,
+      'region' => '',
+      'status' => 0,
+    ),
+    4 => array(
+      'module' => 'system',
+      'delta' => 'help',
+      'theme' => 'common_admin',
+      'weight' => -1,
+      'region' => '',
+      'status' => 0,
+    ),
+  );
+
+  foreach ($blocks as $block) {
+    $block['status'] = 0;
+    $block['region'] = '';
+    db_update('block')
+      ->fields(array(
+        'status' => $block['status'],
+        'weight' => $block['weight'],
+        'region' => $block['region'],
+      ))
+      ->condition('module', $block['module'])
+      ->condition('delta', $block['delta'])
+      ->condition('theme', $block['theme'])
+      ->execute();
+  }
+
+  theme_disable(array('bartik'));
+  theme_enable(array('common_admin', 'rubik', 'tao', 'twitter_bootstrap_panels'));
+  variable_set('admin_theme', 'common_admin');
+  variable_set('theme_default', 'twitter_bootstrap_panels');
+  variable_set('default_logo', 0);
+  variable_set('logo_path', 'home.png');
+
+  module_disable(array('overlay', 'toolbar'));
+
+  $instance = field_info_instance('node', 'field_image', 'article');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'field_tags', 'article');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'body', 'article');
+  field_delete_instance($instance);
+  $instance = field_info_instance('asset', 'field_asset_image_description', 'image');
+  field_delete_instance($instance);
+  $instance = field_info_instance('asset', 'field_asset_gallery_desc', 'gallery');
+  field_delete_instance($instance);
+  $instance = field_info_instance('asset', 'field_asset_video_file', 'video');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'body', 'page');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'field_body', 'page');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'field_copyright', 'page');
+  field_delete_instance($instance);
+  $instance = field_info_instance('node', 'field_read_more_external', 'page');
+  field_delete_instance($instance);
+
+  drupal_flush_all_caches();
+  $features = array(
+    'common_admin_menu',
+    'common_asset_library_view',
+    'common_content_type_article',
+    'common_content_type_page',
+    'common_dashboard_article',
+    'common_dashboard_medialibrary',
+    'common_dashboard_page',
+    'common_dashboard_tags',
+    'common_dashboard_users',
+    'common_image_styles',
+    'common_metatags',
+    'common_nodequeues',
+    'common_input_formats',
+    'common_settings',
+    'common_menu_additional_header',
+    'common_menu_position_rules',
+    'common_pathauto_settings',
+    'common_dashboard_blocks',
+  );
+
+  module_enable($features);
+}

@@ -1,0 +1,4 @@
+name = common Form Layouts
+description = Provides form customization specific for "common" website
+core = 7.x
+package = common

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Common Dashboard Pages feature.
+ */
+
+include_once('common_dashboard_page.features.inc');

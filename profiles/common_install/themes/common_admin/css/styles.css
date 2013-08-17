@@ -1,0 +1,85 @@
+.tooltip-iframe-elements {
+  width: 400px;
+  padding: 0;
+}
+
+.tooltip-iframe-elements .full-slide-holder .btn-prev,
+.tooltip-iframe-elements .full-slide-holder .btn-next {
+  top: 190px;
+}
+
+.full-slide-holder .btn-prev,
+.full-slide-holder .btn-next,
+.full-slider-lg .btn-prev,
+.full-slider-lg .btn-next{
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  text-indent: -9999px;
+  position: absolute;
+  right: 51px;
+  top: 309px;
+  z-index:110;
+  background: url(../images/btns.png) no-repeat 0 -182px;
+}
+.post-holder .pagination{padding: 13px 0 0;}
+.full-slide-holder,
+.full-slider-lg{
+  position: relative;
+}
+
+.full-slide-holder .btn-next,
+.full-slider-lg .btn-next{
+  background-position: -35px -182px;
+  right: 12px;
+}
+.full-slide{
+  margin:10px 0 21px;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  width: 100%;
+}
+.full-slide .full-item .ttl,
+.full-slide .label-ttl{
+  left:-16px;
+}
+.full-slide .right-label{
+  left:auto;
+  right:-16px
+}
+.full-slide li{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background: url(../images/bg-body.gif);
+}
+.full-slide li.active{
+  z-index:100;
+}
+.full-slide .full-item{
+  margin-bottom: 5px;
+}
+.full-item .holder {
+    position: relative;
+}
+.full-item {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-shadow: 1px 1px 1px #EAEAEA;
+    padding: 5px;
+}
+.full-item img, .full-item iframe {
+    vertical-align: top;
+    width: 100%;
+}
+
+ul.full-slide {
+  padding: 0;
+  margin: 0;
+}
+
+ul.full-slide div.full-item {
+  margin: 0;
+}

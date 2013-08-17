@@ -1,0 +1,16 @@
+Index: sites/all/modules/contrib/nodequeue/nodequeue.module
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- sites/all/modules/contrib/nodequeue/nodequeue.module	(revision )
++++ sites/all/modules/contrib/nodequeue/nodequeue.module	(revision )
+@@ -712,7 +712,7 @@
+       $subqueues[$sqid] = $cache[$sqid];
+     }
+   }
+-  return $subqueues;
++  return isset($subqueues) ? $subqueues : array();
+ }
+ 
+ /**

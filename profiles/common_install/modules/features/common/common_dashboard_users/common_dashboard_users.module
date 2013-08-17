@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Common Dashboard Users feature.
+ */
+
+include_once('common_dashboard_users.features.inc');

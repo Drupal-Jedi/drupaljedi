@@ -1,0 +1,13 @@
+name = Common image styles
+description = Provides common images styles
+core = 7.x
+package = Common features
+php = 5.2.4
+version = 7.x-1.0
+project = common_image_styles
+dependencies[] = image
+features[features_api][] = api:1
+features[image][] = asset_image_in_body
+features[image][] = asset_image_tooltip
+features[image][] = asset_list_preview
+features[image][] = tooltip

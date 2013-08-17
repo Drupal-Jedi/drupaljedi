@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Geopolis Dashboard Multimedia library feature.
+ */
+
+include_once('common_dashboard_medialibrary.features.inc');

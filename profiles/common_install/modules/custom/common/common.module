@@ -1,0 +1,189 @@
+<?php
+/**
+ * @file
+ * Common module.
+ */
+
+define('COMMON_MODULE_PATH', drupal_get_path('module', 'common'));
+
+require_once COMMON_MODULE_PATH . '/common.form.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function common_menu() {
+  $items = array();
+
+  $items['admin/common_settings'] = array(
+    'title' => 'Site settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('common_site_setting_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('Access administration menu'),
+    'weight' => -51,
+    'file' => 'common.admin.inc',
+  );
+  $items['node/%node/unpublish'] = array(
+    'title' => 'Unpublish',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('common_node_unpublish_confirm', 1),
+    'access callback' => 'node_access',
+    'access arguments' => array('update', 1),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+    'file' => 'common.admin.inc',
+  );
+  $items['node/%node/publish'] = array(
+    'title' => 'Publish',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('common_node_publish_confirm', 1),
+    'access callback' => 'node_access',
+    'access arguments' => array('update', 1),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_INLINE,
+    'file' => 'common.admin.inc',
+  );
+  $items['admin/content/assets/view/%asset/edit'] = array(
+    'title' => 'Edit',
+    'access arguments' => array('Administer assets'),
+    'page callback' => 'common_asset_edit',
+    'page arguments' => array(4),
+    'weight' => 0,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'common.admin.inc',
+  );
+  $items['admin/content/assets/view/%asset/delete'] = array(
+    'title' => 'Delete',
+    'access arguments' => array('Administer assets'),
+    'page callback' => 'common_asset_delete',
+    'page arguments' => array(4),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'common.admin.inc',
+  );
+  $items['admin/taxonomy/term/%/delete'] = array(
+    'title' => 'Delete Term',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('common_additions_taxonomy_term_confirm_delete', 3),
+    'access arguments' => array('administer taxonomy'),
+    'file' => 'taxonomy.admin.inc',
+    'file path' => drupal_get_path('module', 'taxonomy'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function common_menu_alter(&$items) {
+  if (!empty($items['assets/tooltip/%asset/%'])) {
+    $items['assets/tooltip/%asset/%']['theme callback'] = 'common_asset_tooltip_theme_callback';
+  }
+}
+
+/**
+ * Choose admin asset theme.
+ */
+function common_asset_tooltip_theme_callback() {
+  return 'common_admin';
+}
+
+/**
+ * Implements hook_admin_paths().
+ */
+function common_admin_paths() {
+  if (variable_get('node_admin_theme', 1)) {
+    $paths = array(
+      'import' => TRUE,
+      'import/*' => TRUE,
+      'node/*/publish' => TRUE,
+      'node/*/delete*' => TRUE,
+      'node/*/unpublish' => TRUE,
+      'hierarchical_select_ajax/*' => TRUE,
+    );
+    return $paths;
+  }
+}
+
+/**
+ * Implements hook_menu_block_blocks().
+ */
+function common_menu_block_blocks() {
+  // The array key is the block delta used by menu block.
+  return array(
+    'common-menu-1' => array(
+      'menu_name'   => 'menu-common-admin-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => '',
+      'level'       => 1,
+      'follow'      => 0,
+      'depth'       => 1,
+      'expanded'    => 0,
+      'sort'        => 0,
+    ),
+    'common-menu-2' => array(
+      'menu_name'   => 'menu-common-admin-menu',
+      'parent_mlid' => 0,
+      'title_link'  => 0,
+      'admin_title' => '',
+      'level'       => 2,
+      'follow'      => 0,
+      'depth'       => 0,
+      'expanded'    => 0,
+      'sort'        => 0,
+    ),
+  );
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function common_ctools_plugin_api($owner, $api) {
+  if ($owner == 'panels') {
+    return array('version' => 2.0);
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function common_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools' || $module == 'panels' || $module == 'page_manager' || $module == 'entityreference') {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function common_views_api() {
+  return array(
+    'api' => '3.0-alpha1',
+    'path' => COMMON_MODULE_PATH . '/views',
+  );
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function common_entity_info_alter(&$entity_info) {
+  $view_modes = array(
+    'asset' => array(
+      'thumbnail',
+      'in_body',
+    ),
+  );
+
+  foreach ($view_modes as $key => $entity_type) {
+    foreach ($entity_type as $mode) {
+      $entity_info[$key]['view modes'][$mode] = array(
+        'label' => t(drupal_ucfirst(str_replace('_', ' ', $mode))),
+        'custom settings' => TRUE,
+      );
+    }
+  }
+}

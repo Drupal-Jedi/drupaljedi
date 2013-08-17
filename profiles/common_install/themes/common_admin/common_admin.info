@@ -1,0 +1,28 @@
+name = common_admin
+description = Admin theme derived from Rubik theme.
+base theme = rubik
+core = 7.x
+engine = phptemplate
+
+regions[content] = Content
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+
+stylesheets[screen][] = css/custom_admin.css
+stylesheets[screen][] = css/styles.css
+
+scripts[] = scripts/diaporama_modern.js
+scripts[] = scripts/fancybox.js
+scripts[] = scripts/form_settings.js
+scripts[] = scripts/jquery.slideshow.js
+scripts[] = scripts/jquery.main.js
+scripts[] = scripts/scripts.js
+scripts[] = scripts/custom_admin.js
+
+; Support shortcut module links
+settings[shortcut_module_link] = 1
+settings[common_admin_menu_level_1] = "common-menu-1"
+settings[common_admin_menu_level_2] = "common-menu-2"
+settings[common_admin_menu_level_3] = "common-menu-3"
+

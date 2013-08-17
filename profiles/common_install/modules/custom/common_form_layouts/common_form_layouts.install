@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Collection of install hooks for common_form_layouts module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function common_form_layouts_install() {
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('type', 'module')
+    ->condition('name', 'common_form_layouts')
+    ->execute();
+}
+
+/**
+ * Increase the module weight.
+ *
+ * @see common_form_layouts_install()
+ */
+function common_form_layouts_update_7300() {
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('type', 'module')
+    ->condition('name', 'common_form_layouts')
+    ->execute();
+}
