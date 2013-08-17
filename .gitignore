@@ -8,8 +8,8 @@ sites/*/private
 # Custom ingores
 .idea
 .idea/*
-profiles/common_install
-profiles/common_install/*
+profiles/*
+!profiles/default
 sites/*
 !sites/all
 !sites/default
