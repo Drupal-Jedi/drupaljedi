@@ -1,0 +1,19 @@
+name = Common
+description = Provides common site functionality.
+core = 7.x
+package = "Common"
+
+files[] = views/common.views.inc
+files[] = views/handlers/common_views_handler_author_link_edit.inc
+files[] = views/handlers/common_views_handler_author_link_delete.inc
+files[] = views/handlers/common_views_handler_field_node_link_unpublish.inc
+files[] = views/handlers/common_views_handler_field_node_link_publish.inc
+files[] = views/handlers/common_views_handler_field_user_link_activate.inc
+files[] = views/handlers/common_views_handler_field_user_link_block.inc
+files[] = views/handlers/common_views_handler_field_ref_link_insert.inc
+files[] = views/handlers/common_views_handler_nodequeue_position_before_null.inc
+files[] = views/handlers/common_views_handler_field_term_link_delete.inc
+files[] = views/handlers/common_views_handler_field_bean_block_link_edit.inc
+files[] = views/handlers/common_views_handler_field_bean_block_link_delete.inc
+files[] = views/handlers/common_views_handler_field_asset_link_edit.inc
+files[] = views/handlers/common_views_handler_field_asset_link_delete.inc

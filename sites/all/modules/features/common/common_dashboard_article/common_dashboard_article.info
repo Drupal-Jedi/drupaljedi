@@ -1,0 +1,15 @@
+name = Common Dashboard Article
+description = Provides dashboard page and views for articles management.
+core = 7.x
+package = Common features
+php = 5.2.4
+version = 7.x-1.0
+project = common_dashboard_article
+dependencies[] = ctools
+dependencies[] = page_manager
+dependencies[] = views
+features[ctools][] = page_manager:pages_default:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[page_manager_pages][] = dashboard_article
+features[views_view][] = dashboard_articles

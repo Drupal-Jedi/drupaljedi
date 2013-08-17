@@ -1,0 +1,357 @@
+<?php
+
+/**
+ * @file
+ * common form layouts.
+ */
+
+define('common_EXPOSED_DATE_FORMAT', 'd/m/Y');
+define('common_FORM_LAYOUTS', drupal_get_path('module', 'common_form_layouts'));
+
+/**
+ * Implements hook_theme().
+ */
+function common_form_layouts_theme() {
+  $items = array();
+  $items['asset_form_edit'] = array(
+    'render element' => 'form',
+    'path' => drupal_get_path('theme', 'common_admin') . '/templates',
+    'template' => 'form-default',
+  );
+
+  $items['node_form'] = array(
+    'render element' => 'form',
+    'path' => drupal_get_path('theme', 'common_admin') . '/templates',
+    'template' => 'form-default',
+  );
+
+  $items['taxonomy_form_term'] = array(
+    'render element' => 'form',
+    'path' => drupal_get_path('theme', 'common_admin') . '/templates',
+    'template' => 'form-default',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function common_form_layouts_form_node_form_alter(&$form, &$form_state) {
+
+  if (strpos($form['#id'], 'node-form') !== FALSE) {
+
+    $form['options']['#access'] = 0;
+    $form['status'] = $form['options']['status'];
+    unset($form['options']['status']);
+
+    $form['additional_settings']['#access'] = user_access('access additional node settings');
+    $form['additional_settings']['#weight'] = 49;
+
+    if (isset($form['domain'])) {
+      $form['domain']['#weight'] = 50;
+      $form['domain']['#access'] = user_access('access additional node settings') || user_access("set {$form['#bundle']} domain access");
+    }
+
+    if (isset($form['scheduler_settings'])) {
+      unset($form['scheduler_settings']['#group']);
+      $form['scheduler_settings']['#collapsible'] = 0;
+    }
+
+    switch ($form['type']['#value']) {
+      case 'programme':
+        $lang = $form['field_emission_type']['#language'];
+        $form['field_programme_menu']['#states'] = array(
+          'visible' => array(
+            ':input[name="field_emission_type[' . $lang . ']"]' => array('value' => (string) '3'),
+          ),
+        );
+        $form['field_minisite_link']['#states'] = array(
+          'visible' => array(
+            ':input[name="field_emission_type[' . $lang . ']"]' => array('value' => (string) '4'),
+          ),
+        );
+        break;
+
+      case 'article':
+        // Only Superviseur can set comment options.
+        unset($form['comment_settings']['#group']);
+        $form['comment_settings']['#collapsible'] = 0;
+        $node = $form['#node'];
+        if (isset($node->nid)) {
+          drupal_set_title(t('Edit article'));
+        }
+        else {
+          drupal_set_title(t('Add article'));
+        }
+        break;
+
+    }
+  }
+}
+
+/**
+ * Term after build().
+ */
+function common_form_layouts_term_after_build($form) {
+  $form['description']['format']['#access'] = FALSE;
+  return $form;
+}
+
+/**
+ * Implements hook_form_taxonomy_form_term_alter().
+ */
+function common_form_layouts_form_taxonomy_form_term_alter(&$form, &$form_state, $form_id) {
+
+  if (isset($form['description'])) {
+    $form['description']['#maxlength_js'] = TRUE;
+    $form['description']['#attributes']['maxlength'] = 1000;
+  }
+
+  $form['#after_build'][] = 'common_form_layouts_term_after_build';
+  $form['description']['#format'] = 'plain_text';
+  if (isset($form['#bundle']) && $form['#bundle'] == 'tags') {
+    $form['field_dressing_image']['#element_validate'][] = 'common_form_layouts_dressing_validate';
+    $form['relations']['#access'] = user_access('access additional term settings');
+    $form['path']['#access'] = user_access('access additional term settings');
+  }
+  if (!is_object($form['#term']) && !$form['#term']['tid']) {
+    drupal_set_title(t('Add tag'));
+  }
+}
+
+/**
+ * Term after build().
+ */
+function common_form_layouts_dressing_validate(&$element_wrapper, &$form_state) {
+  $values = $form_state['values'];
+  $langcode = field_language('taxonomy_term', $form_state['term'], 'field_tag_type');
+}
+
+/**
+ * Preprocess taxonomy form term.
+ */
+function common_form_layouts_preprocess_taxonomy_form_term(&$vars) {
+  drupal_add_js(drupal_get_path('module', 'common_form_layouts') . '/controls.js', 'file');
+}
+
+/**
+ * Preprocess function.
+ */
+function common_form_layouts_preprocess_asset_form(&$vars) {
+  if ('tags' === $vars['form']['#bundle']) {
+    drupal_add_js(drupal_get_path('module', 'common_form_layouts') . '/controls.js', 'file');
+  }
+}
+
+/**
+ * Preprocess function.
+ */
+function common_form_layouts_preprocess_asset_form_edit(&$vars) {
+  drupal_add_js(drupal_get_path('module', 'common_form_layouts') . '/controls.js', 'file');
+}
+
+/**
+ * Preprocess function for common node forms.
+ */
+function common_form_layouts_preprocess_form_node(&$vars) {
+
+  if (isset($vars['form']['#node_edit_form']) && $vars['form']['#node_edit_form']) {
+
+    drupal_add_js(drupal_get_path('module', 'common_form_layouts') . '/controls.js', 'file');
+    $vars['sidebar'] = isset($vars['sidebar']) ? $vars['sidebar'] : array();
+
+    if (isset($vars['form']['field_meta_selection'])) {
+      $vars['sidebar']['field_meta_selection'] = $vars['form']['field_meta_selection'];
+      $vars['sidebar']['field_meta_selection']['#weight'] = 1;
+      unset($vars['form']['field_meta_selection']);
+    }
+    // Live part.
+    if (!empty($vars['form']['live_status'])) {
+      $vars['sidebar']['live_status'] = $vars['form']['live_status'];
+      $vars['sidebar']['live_status']['#weight'] = 1;
+      $vars['form']['live_status']['#access'] = FALSE;
+    }
+    // Live part.
+    if (!empty($vars['form']['video_id'])) {
+      $vars['sidebar']['video_id'] = $vars['form']['video_id'];
+      $vars['sidebar']['video_id']['#weight'] = 3;
+      $vars['form']['video_id']['#access'] = FALSE;
+    }
+    if (!empty($vars['form']['field_live_published_date'])) {
+      $vars['sidebar']['field_live_published_date'] = $vars['form']['field_live_published_date'];
+      $vars['sidebar']['field_live_published_date']['#weight'] = 4;
+      $vars['form']['field_live_published_date']['#access'] = FALSE;
+    }
+    if (!empty($vars['form']['field_live_unpublished_date'])) {
+      $vars['sidebar']['field_live_unpublished_date'] = $vars['form']['field_live_unpublished_date'];
+      $vars['form']['field_live_unpublished_date']['#access'] = FALSE;
+      $vars['sidebar']['field_live_unpublished_date']['#weight'] = 5;
+    }
+
+    $vars['sidebar']['status'] = $vars['form']['status'];
+    $vars['sidebar']['status']['#weight'] = 2;
+    unset($vars['form']['status']);
+
+    $vars['sidebar']['comment_settings'] = $vars['form']['comment_settings'];
+    $vars['sidebar']['comment_settings']['#weight'] = 3;
+    unset($vars['form']['comment_settings']);
+
+    if (isset($vars['form']['scheduler_settings'])) {
+      if ($vars['form']['#bundle'] == 'game' && $vars['form']['#node']->status) {
+        $vars['form']['scheduler_settings']['publish_on']['#access'] = FALSE;
+      }
+      else {
+        $vars['form']['scheduler_settings']['#access'] = !$vars['form']['#node']->status;
+      }
+      $vars['form']['scheduler_settings']['#attributes'] = array();
+      $vars['sidebar']['scheduler_settings'] = $vars['form']['scheduler_settings'];
+      unset($vars['form']['scheduler_settings']);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function common_form_layouts_theme_registry_alter(&$theme_registry) {
+  $theme_registry['node_form']['preprocess functions'][] = 'common_form_layouts_preprocess_form_node';
+  $theme_registry['taxonomy_form_term']['preprocess functions'][] = 'common_form_layouts_preprocess_taxonomy_form_term';
+}
+
+/**
+ * Implements hook_permission().
+ */
+function common_form_layouts_permission() {
+  return array(
+    'access additional node settings' => array(
+      'title' => t('Access additional node settings'),
+      'description' => t('Access additional node settings fieldsets on node forms'),
+    ),
+    'access additional term settings' => array(
+      'title' => t('Access additional term settings'),
+      'description' => t('Access additional settings on term forms'),
+    ),
+  );
+}
+
+
+/**
+ * common_form_layouts_form_views_exposed_form_alter.
+ */
+function common_form_layouts_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
+  $children = element_children($form);
+  foreach ($children as $child_name) {
+    $child = $form[$child_name];
+    if (isset($child['value']) &&  isset($child['value']['#type']) && $child['value']['#type'] == 'date_popup') {
+      $form[$child_name]['value']['#date_format'] = common_EXPOSED_DATE_FORMAT;
+    }
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function common_form_layouts_element_info_alter(&$type) {
+  if (module_exists('link') && !empty($type['link_field'])) {
+    array_pop($type['link_field']['#process']);
+    array_push($type['link_field']['#process'], '_common_form_layouts_link_field_process');
+  }
+}
+
+/**
+ * Custom process function for the link field.
+ */
+function _common_form_layouts_link_field_process($element, $form_state, $complete_form) {
+  $instance = field_widget_instance($element, $form_state);
+  $settings = $instance['settings'];
+  $element['url'] = array(
+    '#type' => 'textfield',
+    '#maxlength' => LINK_URL_MAX_LENGTH,
+    '#title' => t('URL'),
+    '#required' => ($element['#delta'] == 0 && $settings['url'] !== 'optional') ? $element['#required'] : FALSE,
+    '#default_value' => isset($element['#value']['url']) ? $element['#value']['url'] : NULL,
+  );
+  if ($settings['title'] !== 'none' && $settings['title'] !== 'value') {
+    $element['title'] = array(
+      '#type' => 'textfield',
+      // Patch #1307788 from nmc.
+      '#maxlength' => $settings['title_maxlength'],
+      '#title' => t('Title'),
+      // Patch #1307788 from nmc.
+      '#description' => t('The link title is limited to @length characters maximum.', array(
+        '@length' => $settings['title_maxlength'])
+      ),
+      // Davereids patch from jan 2011.
+      '#required' => ($settings['title'] == 'required' && (($element['#delta'] == 0 && $element['#required'])
+        || !empty($element['#value']['url']))) ? TRUE : FALSE,
+      '#default_value' => isset($element['#value']['title']) ? $element['#value']['title'] : NULL,
+    );
+  }
+
+  // Initialize field attributes as an array if it is not an array yet.
+  if (!is_array($settings['attributes'])) {
+    $settings['attributes'] = array();
+  }
+  // Add default attributes.
+  $settings['attributes'] += _link_default_attributes();
+  $attributes = isset($element['#value']['attributes']) ? $element['#value']['attributes'] : $settings['attributes'];
+  if (!empty($settings['attributes']['target']) && $settings['attributes']['target'] == LINK_TARGET_USER) {
+    $element['attributes']['target'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Open URL in a New Window'),
+      '#return_value' => LINK_TARGET_NEW_WINDOW,
+      '#default_value' => isset($attributes['target']) ? $attributes['target'] : FALSE,
+    );
+  }
+  if (!empty($settings['attributes']['configurable_title']) && $settings['attributes']['configurable_title'] == 1) {
+    $element['attributes']['title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Link "title" attribute'),
+      '#default_value' => isset($attributes['title']) ? $attributes['title'] : '',
+      '#field_prefix' => 'title = "',
+      '#field_suffix' => '"',
+    );
+  }
+
+  $link_field_settings = field_widget_field($element, $form_state);
+  if ($link_field_settings['cardinality'] == FIELD_CARDINALITY_UNLIMITED) {
+    $element['#required'] = FALSE;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function common_form_layouts_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'user_profile_form':
+      drupal_add_js(drupal_get_path('module', 'common_form_layouts') . '/controls.js', 'file');
+      break;
+    case 'asset_edit_image_form':
+    case 'assets_wysiwyg_form':
+      $form['field_asset_free_crop']['#attached']['js'][] = common_FORM_LAYOUTS . '/imagefield_free_crop.js';
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function common_form_layouts_form_asset_form_alter(&$form, &$form_state) {
+  if (arg(0) == 'admin' && arg(1) == 'content' && arg(2) == 'assets' && arg(3) == 'manage' && is_numeric(arg(4))) {
+    $form['#theme'] = 'asset_form_edit';
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function common_form_layouts_form_assets_frame_form_alter(&$form, &$form_state) {
+  if ($form['#bundle'] == 'image') {
+    common_form_layouts_form_asset_edit_image_form_alter($form, $form_state);
+  }
+}

@@ -1,0 +1,16 @@
+name = Common metatags
+description = Common metatags
+core = 7.x
+package = Common features
+php = 5.2.4
+version = 7.x-1.0
+project = common_metatags
+dependencies[] = metatag
+features[features_api][] = api:1
+features[metatag][] = global
+features[metatag][] = global:frontpage
+features[metatag][] = node
+features[metatag][] = node:article
+features[metatag][] = node:page
+features[metatag][] = taxonomy_term
+features[metatag][] = taxonomy_term:category

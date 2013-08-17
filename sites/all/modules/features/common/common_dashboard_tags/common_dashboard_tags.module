@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Common Dashboard Tags feature.
+ */
+
+include_once('common_dashboard_tags.features.inc');
