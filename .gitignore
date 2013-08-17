@@ -5,6 +5,11 @@ sites/*/settings*.php
 sites/*/files
 sites/*/private
 
+# Custom ingores
+.idea
+.idea/*
+profiles/common_install
+profiles/common_install/*
 sites/*
 !sites/all
 !sites/default
