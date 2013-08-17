@@ -13,5 +13,3 @@ profiles/*
 sites/*
 !sites/all
 !sites/default
-!sites/sites.php
-!sites/example.sites.php
