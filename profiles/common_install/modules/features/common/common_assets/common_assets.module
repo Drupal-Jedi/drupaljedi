@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Le360 Assets feature.
- */
-
-include_once 'common_assets.features.inc';

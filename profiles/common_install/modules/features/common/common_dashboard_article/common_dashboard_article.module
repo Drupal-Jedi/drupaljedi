@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Common Dashboard Article feature.
- */
-
-include_once('common_dashboard_article.features.inc');

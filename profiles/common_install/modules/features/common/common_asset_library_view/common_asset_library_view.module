@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- */
-
-// Drupal needs this blank file.
-include_once('common_asset_library_view.features.inc');

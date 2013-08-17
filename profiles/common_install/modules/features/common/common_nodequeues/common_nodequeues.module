@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Common nodequeues feature.
- */
-
-include_once 'common_nodequeues.features.inc';

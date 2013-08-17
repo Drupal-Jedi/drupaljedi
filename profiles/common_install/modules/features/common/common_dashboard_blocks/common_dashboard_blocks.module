@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Common Dashboard Blocks feature.
- */
-
-include_once 'common_dashboard_blocks.features.inc';
