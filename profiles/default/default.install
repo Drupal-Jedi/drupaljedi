@@ -11,7 +11,7 @@
  *
  * @see system_install()
  */
-function minimal_install() {
+function default_install() {
   //////////////////////////////////////////
   //* Start of enabling Standart profile *//
   //////////////////////////////////////////
@@ -308,7 +308,6 @@ function minimal_install() {
   variable_set('theme_default', 'twitter_bootstrap_panels');
   variable_set('default_logo', 0);
   variable_set('logo_path', 'home.png');
-
   module_disable(array('overlay', 'toolbar'));
 
   $instance = field_info_instance('node', 'field_image', 'article');
