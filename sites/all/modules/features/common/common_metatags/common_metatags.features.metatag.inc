@@ -15,13 +15,13 @@ function common_metatags_metatag_export_default() {
     'instance' => 'global:frontpage',
     'config' => array(
       'title' => array(
-        'value' => 'Recent Articles | ' . variable_get('site_name', 'Site name'),
+        'value' => variable_get('site_name', 'Site name'),
       ),
       'description' => array(
-        'value' => 'This site provides blog, articles about programming, life & another things.',
+        'value' => '',
       ),
       'keywords' => array(
-        'value' => 'Drupal, C++, Vim, Php, Perl, Apache, Linux',
+        'value' => '',
       ),
       'generator' => array(
         'value' => '',
