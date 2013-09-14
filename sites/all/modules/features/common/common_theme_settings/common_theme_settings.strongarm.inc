@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * common_settings.strongarm.inc
+ * common_theme_settings.strongarm.inc
  */
 
 /**
  * Implements hook_strongarm().
  */
-function common_settings_strongarm() {
+function common_theme_settings_strongarm() {
   $export = array();
 
   $strongarm = new stdClass();
@@ -47,7 +47,7 @@ function common_settings_strongarm() {
   $strongarm->name = 'theme_twitter_bootstrap_panels_settings';
   $strongarm->value = array(
     'toggle_logo' => 1,
-    'toggle_name' => 1,
+    'toggle_name' => 0,
     'toggle_slogan' => 1,
     'toggle_node_user_picture' => 1,
     'toggle_comment_user_picture' => 1,
@@ -55,8 +55,10 @@ function common_settings_strongarm() {
     'toggle_favicon' => 1,
     'toggle_main_menu' => 1,
     'toggle_secondary_menu' => 1,
+    'toggle_search' => 1,
     'default_logo' => 0,
-    'logo_path' => 'public://default_logo.png',
+    'logo_path' => 'default_logo.png',
+    'logo_upload' => '',
     'default_favicon' => 1,
     'favicon_path' => '',
     'favicon_upload' => '',

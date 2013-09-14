@@ -878,7 +878,7 @@ function common_assets_field_default_fields() {
           'select_maximum_area' => 1,
           'validate_resolution' => 0,
         ),
-        'type' => 'image_widget',
+        'type' => 'image_image',
         'weight' => '1',
       ),
     ),

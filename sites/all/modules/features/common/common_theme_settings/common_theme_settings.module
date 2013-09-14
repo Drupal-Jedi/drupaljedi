@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Common theme settings feature.
+ */
+
+include_once 'common_theme_settings.features.inc';

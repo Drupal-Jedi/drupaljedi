@@ -309,6 +309,12 @@ function drupaljedi_profile_install() {
   variable_set('admin_theme', 'common_admin');
   variable_set('theme_default', 'twitter_bootstrap_panels');
 
+  // Copy default logo image to files folder.
+  $path = variable_get('file_public_path', conf_path() . '/files');
+  $file_name = 'default_logo.png';
+  $default_logo = file_get_contents($file_name);
+  file_put_contents(DRUPAL_ROOT . "/$path/$file_name", $default_logo);
+
   // Default config for jQuery update module.
   variable_set('jquery_update_jquery_version', '1.7');
   variable_set('jquery_update_jquery_cdn', 'goolge');
@@ -357,7 +363,7 @@ function drupaljedi_profile_install() {
     'common_metatags',
     'common_nodequeues',
     'common_input_formats',
-    'common_settings',
+    'common_theme_settings',
     'common_menu_additional_header',
     'common_menu_position_rules',
     'common_pathauto_settings',
@@ -365,4 +371,5 @@ function drupaljedi_profile_install() {
   );
 
   module_enable($features);
+  drupal_flush_all_caches();
 }

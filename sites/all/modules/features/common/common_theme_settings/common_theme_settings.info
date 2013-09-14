@@ -1,0 +1,13 @@
+name = Common theme settings
+description = Provides default theme settings.
+core = 7.x
+package = Features
+version = 7.x-1.0
+project = common_theme_settings
+dependencies[] = ctools
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[variable][] = admin_theme
+features[variable][] = theme_common_admin_settings
+features[variable][] = theme_twitter_bootstrap_panels_settings

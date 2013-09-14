@@ -63,7 +63,6 @@ dependencies[] = piwik
 dependencies[] = views_ui
 dependencies[] = asset_widget
 dependencies[] = emvideo
-dependencies[] = field_group
 dependencies[] = email_registration
 dependencies[] = imagefield_crop
 dependencies[] = asset_image

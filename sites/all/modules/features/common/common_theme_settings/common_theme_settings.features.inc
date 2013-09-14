@@ -1,14 +1,13 @@
 <?php
 /**
  * @file
- * common_settings.features.inc
+ * common_theme_settings.features.inc
  */
 
 /**
  * Implements hook_ctools_plugin_api().
  */
-function common_settings_ctools_plugin_api() {
-  list($module, $api) = func_get_args();
+function common_theme_settings_ctools_plugin_api($module = NULL, $api = NULL) {
   if ($module == "strongarm" && $api == "strongarm") {
     return array("version" => "1");
   }
