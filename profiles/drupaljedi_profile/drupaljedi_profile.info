@@ -1,4 +1,4 @@
-name = DrupalJedi
+name = DrupalJedi profile
 description = DrupalJedi demonstration profile.
 version = VERSION
 core = 7.x
