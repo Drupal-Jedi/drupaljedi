@@ -1,7 +1,3 @@
-body {
-  padding-top: 60px;
-}
-
 /* Fix Toolbar for .navbar-fixed-top */
 body.toolbar .navbar-fixed-top {
  top: 30px;
@@ -38,10 +34,6 @@ div#admin-toolbar {
 }
 
 /* Admin menu fix */
-body.admin-menu {
-  margin-top: 40px !important;
-}
-
 #admin-menu, #admin-menu .dropdown {
   z-index: 9999;
 }

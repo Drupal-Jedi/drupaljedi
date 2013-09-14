@@ -11,7 +11,7 @@
  *
  * @see system_install()
  */
-function default_install() {
+function drupaljedi_profile_install() {
   //////////////////////////////////////////
   //* Start of enabling Standart profile *//
   //////////////////////////////////////////
@@ -301,14 +301,24 @@ function default_install() {
       ->condition('theme', $block['theme'])
       ->execute();
   }
+  module_disable(array('overlay', 'toolbar'));
 
+  // Default theme settings.
   theme_disable(array('bartik'));
   theme_enable(array('common_admin', 'rubik', 'tao', 'twitter_bootstrap_panels'));
   variable_set('admin_theme', 'common_admin');
   variable_set('theme_default', 'twitter_bootstrap_panels');
-  variable_set('default_logo', 0);
-  variable_set('logo_path', 'home.png');
-  module_disable(array('overlay', 'toolbar'));
+  $theme_common_admin_settings = variable_get('theme_common_admin_settings', array());
+  $theme_common_admin_settings['logo_path'] = 'home.png';
+  variable_set('theme_common_admin_settings', $theme_common_admin_settings);
+  $theme_twitter_bootstrap_panels_settings = variable_get('theme_twitter_bootstrap_panels_settings', array());
+  $theme_twitter_bootstrap_panels_settings['logo_path'] = 'home.png';
+  $theme_twitter_bootstrap_panels_settings['default_logo'] = 0;
+  variable_set('theme_twitter_bootstrap_panels_settings', $theme_twitter_bootstrap_panels_settings);
+
+  // Default config for jQuery update module.
+  variable_set('jquery_update_jquery_version', '1.7');
+  variable_set('jquery_update_jquery_cdn', 'goolge');
 
   $instance = field_info_instance('node', 'field_image', 'article');
   field_delete_instance($instance);
@@ -331,6 +341,14 @@ function default_install() {
   $instance = field_info_instance('node', 'field_read_more_external', 'page');
   field_delete_instance($instance);
 
+  // Enable default site template.
+  // @see page_manager_enable_page().
+  ctools_include('context');
+  $page = page_manager_get_page_cache('site_template');
+  $function = ctools_plugin_get_function($page->subtask, 'enable callback');
+  $function($page, FALSE);
+
+  // Enable default features.
   drupal_flush_all_caches();
   $features = array(
     'common_admin_menu',

@@ -1,5 +1,5 @@
-name = Default
-description = Default profile
+name = DrupalJedi
+description = DrupalJedi demonstration profile.
 version = VERSION
 core = 7.x
 

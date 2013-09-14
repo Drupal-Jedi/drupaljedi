@@ -4,7 +4,7 @@
  * Template for a twitter bootstrap site template layout.
  */
 ?>
-<header id="navbar" role="banner" class="navbar navbar-fixed-top">
+<header id="navbar" role="banner" class="navbar">
   <div class="navbar-inner">
     <div class="container">
       <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
