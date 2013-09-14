@@ -597,13 +597,13 @@ function common_assets_field_default_fields() {
         ),
       ),
       'locked' => '0',
-      'module' => 'imagefield_crop',
+      'module' => 'image',
       'settings' => array(
         'default_image' => 0,
         'uri_scheme' => 'public',
       ),
       'translatable' => '0',
-      'type' => 'imagefield_crop',
+      'type' => 'image',
     ),
     'field_instance' => array(
       'bundle' => 'image',
@@ -864,7 +864,7 @@ function common_assets_field_default_fields() {
       ),
       'widget' => array(
         'active' => 1,
-        'module' => 'imagefield_crop',
+        'module' => 'image',
         'settings' => array(
           'collapsible' => '2',
           'croparea' => '470x470',
@@ -878,7 +878,7 @@ function common_assets_field_default_fields() {
           'select_maximum_area' => 1,
           'validate_resolution' => 0,
         ),
-        'type' => 'imagefield_crop_widget',
+        'type' => 'image_widget',
         'weight' => '1',
       ),
     ),

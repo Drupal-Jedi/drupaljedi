@@ -305,16 +305,9 @@ function drupaljedi_profile_install() {
 
   // Default theme settings.
   theme_disable(array('bartik'));
-  theme_enable(array('common_admin', 'rubik', 'tao', 'twitter_bootstrap_panels'));
+  theme_enable(array('common_admin', 'twitter_bootstrap_panels'));
   variable_set('admin_theme', 'common_admin');
   variable_set('theme_default', 'twitter_bootstrap_panels');
-  $theme_common_admin_settings = variable_get('theme_common_admin_settings', array());
-  $theme_common_admin_settings['logo_path'] = 'home.png';
-  variable_set('theme_common_admin_settings', $theme_common_admin_settings);
-  $theme_twitter_bootstrap_panels_settings = variable_get('theme_twitter_bootstrap_panels_settings', array());
-  $theme_twitter_bootstrap_panels_settings['logo_path'] = 'home.png';
-  $theme_twitter_bootstrap_panels_settings['default_logo'] = 0;
-  variable_set('theme_twitter_bootstrap_panels_settings', $theme_twitter_bootstrap_panels_settings);
 
   // Default config for jQuery update module.
   variable_set('jquery_update_jquery_version', '1.7');

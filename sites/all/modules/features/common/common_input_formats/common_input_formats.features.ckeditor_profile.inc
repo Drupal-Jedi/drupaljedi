@@ -100,6 +100,9 @@ function common_input_formats_ckeditor_profile_defaults() {
       'input_formats' => array(),
     ),
     'Full' => array(
+      'input_formats' => array(
+        'full_html' => 'Full HTML',
+      ),
       'name' => 'Full',
       'settings' => array(
         'ss' => '2',

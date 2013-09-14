@@ -12,12 +12,14 @@ function common_image_styles_image_default_styles() {
 
   // Exported image style: asset_image_in_body.
   $styles['asset_image_in_body'] = array(
+    'label' => 'asset_image_in_body',
     'name' => 'asset_image_in_body',
     'effects' => array(),
   );
 
   // Exported image style: asset_image_tooltip.
   $styles['asset_image_tooltip'] = array(
+    'label' => 'asset_image_tooltip',
     'name' => 'asset_image_tooltip',
     'effects' => array(
       5 => array(
@@ -40,6 +42,7 @@ function common_image_styles_image_default_styles() {
 
   // Exported image style: asset_list_preview.
   $styles['asset_list_preview'] = array(
+    'label' => 'asset_list_preview',
     'name' => 'asset_list_preview',
     'effects' => array(
       1 => array(
@@ -63,6 +66,7 @@ function common_image_styles_image_default_styles() {
 
   // Exported image style: tooltip.
   $styles['tooltip'] = array(
+    'label' => 'tooltip',
     'name' => 'tooltip',
     'effects' => array(
       6 => array(
