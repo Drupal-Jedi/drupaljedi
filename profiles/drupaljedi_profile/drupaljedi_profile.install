@@ -325,7 +325,6 @@ function drupaljedi_profile_install() {
   variable_set('cache', 1);
   variable_set('block_cache', 1);
   variable_set('error_level', 0);
-  variable_set('error_level', 0);
 
   $instance = field_info_instance('node', 'field_image', 'article');
   field_delete_instance($instance);
